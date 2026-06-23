@@ -1,0 +1,4 @@
+Add the 23 brand logo files to this folder.
+
+The expected filenames are listed in src/brandData.js.
+You may use PNG, JPG, WEBP, GIF, or SVG files and change those paths freely.

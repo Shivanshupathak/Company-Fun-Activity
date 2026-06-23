@@ -1,0 +1,7 @@
+Add your images or GIF files to this folder.
+
+Then open src/giftData.js and change a gift's media value:
+
+media: "/media/my-surprise.gif"
+
+JPG, PNG, WEBP, GIF, and SVG files are supported by modern browsers.
