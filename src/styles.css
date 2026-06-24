@@ -426,6 +426,160 @@ footer { display: flex; justify-content: space-between; width: min(1160px, 100%)
 .next-game button:hover, .reveal-button:hover { transform: translateY(-2px); }
 
 .brand-game { background: radial-gradient(circle at 50% 35%, rgba(38,169,181,.24), transparent 30%), linear-gradient(145deg, #11264c, #100829 64%, #09051a); }
+.rules-game {
+  padding-bottom: 46px;
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--page-accent) 23%, transparent), transparent 34%), linear-gradient(145deg, #11264c, #100829 64%, #09051a);
+}
+.mystery-rules-game {
+  background: radial-gradient(circle at 50% 30%, rgba(189,165,255,.23), transparent 34%), linear-gradient(145deg, #23104f, #140a30 64%, #09051a);
+}
+.rules-hero {
+  width: min(820px, 100%);
+  margin: 48px auto 30px;
+  text-align: center;
+}
+.rules-hero h1 {
+  margin: 0;
+  font: 700 clamp(42px, 7vw, 74px)/.98 "Fredoka";
+  letter-spacing: -.045em;
+}
+.rules-hero > p:not(.hero__eyebrow) {
+  max-width: 620px;
+  margin: 18px auto 0;
+  color: rgba(255,255,255,.64);
+  line-height: 1.65;
+}
+.team-board {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  width: min(920px, 100%);
+  margin: 0 auto 24px;
+}
+.team-board article,
+.rules-card,
+.steps-board article {
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(145deg, rgba(255,255,255,.1), rgba(255,255,255,.035));
+  box-shadow: 0 26px 65px rgba(0,0,0,.24);
+  backdrop-filter: blur(12px);
+}
+.team-board article {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  border-radius: 28px;
+}
+.team-board article::before {
+  position: absolute;
+  right: -70px;
+  bottom: -90px;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--page-accent) 14%, transparent);
+  content: "";
+}
+.team-board__badge {
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: #15102f;
+  background: var(--page-accent);
+  font-size: 12px;
+  font-weight: 900;
+}
+.team-board h2 {
+  position: relative;
+  margin: 15px 0 18px;
+  font: 700 30px/1 "Fredoka";
+}
+.team-board ul {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.team-board li {
+  padding: 11px 12px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  color: rgba(255,255,255,.82);
+  background: rgba(0,0,0,.14);
+  font-weight: 700;
+}
+.rules-card {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 28px;
+  border-radius: 28px;
+}
+.rules-card h2 {
+  margin: 0 0 18px;
+  font: 700 30px/1 "Fredoka";
+}
+.rules-card ol {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+  padding-left: 24px;
+  color: rgba(255,255,255,.72);
+  line-height: 1.55;
+}
+.rules-card strong {
+  color: var(--page-accent);
+}
+.steps-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  width: min(1050px, 100%);
+  margin: 0 auto;
+}
+.steps-board article {
+  position: relative;
+  overflow: hidden;
+  min-height: 260px;
+  padding: 30px 25px;
+  border-radius: 28px;
+}
+.steps-board span {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 17px;
+  color: #21103f;
+  background: var(--page-accent);
+  font: 900 22px/1 "Fredoka";
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--page-accent) 22%, transparent);
+}
+.steps-board h2 {
+  margin: 24px 0 12px;
+  font: 700 28px/1 "Fredoka";
+}
+.steps-board p {
+  margin: 0;
+  color: rgba(255,255,255,.66);
+  line-height: 1.6;
+}
+.start-game-button {
+  display: block;
+  margin: 30px auto 0;
+  padding: 15px 24px;
+  border: 0;
+  border-radius: 17px;
+  color: #21103f;
+  cursor: pointer;
+  background: var(--page-accent);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--page-accent) 24%, transparent);
+  font-weight: 900;
+  transition: .2s ease;
+}
+.start-game-button:hover { transform: translateY(-2px); }
 .brand-hero { width: min(760px, 100%); margin: 48px auto 30px; text-align: center; }
 .brand-hero h1 { margin: 0; font: 700 clamp(40px,7vw,70px)/1 "Fredoka"; letter-spacing: -.04em; }
 .brand-hero > p:not(.hero__eyebrow) { margin: 17px auto 22px; color: rgba(255,255,255,.62); }
@@ -573,6 +727,8 @@ footer { display: flex; justify-content: space-between; width: min(1160px, 100%)
   .nav-button { grid-row: 2; }
   .next-game { grid-template-columns: auto 1fr; }
   .next-game button { grid-column: 1/-1; width: 100%; }
+  .team-board,
+  .steps-board { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
   .game { padding-inline: 15px; }

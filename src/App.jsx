@@ -134,7 +134,7 @@ function AccessGate({ onUnlock }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
-  const meetingCode = "fun99";
+  const meetingCode = "maihudon";
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -215,6 +215,109 @@ function AccessGate({ onUnlock }) {
           </div>
         </div>
       )}
+    </main>
+  );
+}
+
+function BrandRules({ onStart }) {
+  const teamA = ["Support", "SEO", "Infra", "Social Media", "QA", "CTO"];
+  const teamB = ["OB", "Product", "Paid Media", "HR", "Landing Pages", "Accounting"];
+
+  return (
+    <main className="game rules-game" style={{ "--page-accent": "#70e1f5" }}>
+      <div className="stars stars--one" aria-hidden="true" />
+      <div className="stars stars--two" aria-hidden="true" />
+
+      <header className="topbar">
+        <div className="brand">
+          <span className="brand__icon">🎯</span>
+          <span>Growth99 Fun Friday</span>
+        </div>
+        <div className="level-pill">Game 1 <span>/ 2</span></div>
+      </header>
+
+      <section className="rules-hero">
+        <p className="hero__eyebrow">Before the chaos begins</p>
+        <h1>Guess the Brand Name</h1>
+        <p>Two teams. Hindi clues. Brand names. Bragging rights. Tiny bit of pressure. Perfect.</p>
+      </section>
+
+      <section className="team-board" aria-label="Team division">
+        <article>
+          <span className="team-board__badge">Team A</span>
+          <h2>Team One</h2>
+          <ul>
+            {teamA.map((team) => <li key={team}>{team}</li>)}
+          </ul>
+        </article>
+        <article>
+          <span className="team-board__badge">Team B</span>
+          <h2>Team Two</h2>
+          <ul>
+            {teamB.map((team) => <li key={team}>{team}</li>)}
+          </ul>
+        </article>
+      </section>
+
+      <section className="rules-card">
+        <h2>Rules of the round</h2>
+        <ol>
+          <li>Each clue will appear in Hindi with an English pronunciation.</li>
+          <li>Teams need to guess the correct brand name.</li>
+          <li>The first correct answer gets <strong>+5 points</strong> for that team.</li>
+          <li>If both teams shout at once, the host becomes the Supreme Court. No appeals. 😄</li>
+          <li>Reveal the answer only when everyone is ready.</li>
+        </ol>
+      </section>
+
+      <button className="start-game-button" onClick={onStart} type="button">
+        Start Guessing Brands →
+      </button>
+    </main>
+  );
+}
+
+function MysteryRules({ onStart, onBack }) {
+  return (
+    <main className="game rules-game mystery-rules-game" style={{ "--page-accent": "#bda5ff" }}>
+      <div className="stars stars--one" aria-hidden="true" />
+      <div className="stars stars--two" aria-hidden="true" />
+
+      <header className="topbar">
+        <button className="brand brand--button" onClick={onBack} type="button">
+          <span className="brand__icon">🎁</span>
+          <span>Growth99 Fun Friday</span>
+        </button>
+        <div className="level-pill">Game 2 <span>/ 2</span></div>
+      </header>
+
+      <section className="rules-hero">
+        <p className="hero__eyebrow">Round two, maximum drama</p>
+        <h1>Mystery Box Game</h1>
+        <p>A wheel decides the person. A box decides the challenge. Confidence does the rest.</p>
+      </section>
+
+      <section className="steps-board" aria-label="Mystery box rules">
+        <article>
+          <span>1</span>
+          <h2>Spin the wheel</h2>
+          <p>We spin the wheel and get one lucky name. Lucky is a strong word here.</p>
+        </article>
+        <article>
+          <span>2</span>
+          <h2>Pick a box</h2>
+          <p>That person chooses one mystery box from the current page.</p>
+        </article>
+        <article>
+          <span>3</span>
+          <h2>Act it out</h2>
+          <p>The person needs to act and say the dialogue/challenge revealed from the box.</p>
+        </article>
+      </section>
+
+      <button className="start-game-button" onClick={onStart} type="button">
+        Open Mystery Boxes →
+      </button>
     </main>
   );
 }
@@ -309,7 +412,7 @@ export default function App() {
   const [isUnlocked, setIsUnlocked] = useState(
     () => sessionStorage.getItem("growth99-game-unlocked") === "true",
   );
-  const [gameMode, setGameMode] = useState("brands");
+  const [gameMode, setGameMode] = useState("brandRules");
   const [pageIndex, setPageIndex] = useState(0);
   const [selectedGift, setSelectedGift] = useState(null);
   const [openedGifts, setOpenedGifts] = useState([]);
@@ -319,8 +422,21 @@ export default function App() {
     return <AccessGate onUnlock={() => setIsUnlocked(true)} />;
   }
 
+  if (gameMode === "brandRules") {
+    return <BrandRules onStart={() => setGameMode("brands")} />;
+  }
+
   if (gameMode === "brands") {
-    return <BrandGame onStartMystery={() => setGameMode("gifts")} />;
+    return <BrandGame onStartMystery={() => setGameMode("mysteryRules")} />;
+  }
+
+  if (gameMode === "mysteryRules") {
+    return (
+      <MysteryRules
+        onStart={() => setGameMode("gifts")}
+        onBack={() => setGameMode("brands")}
+      />
+    );
   }
 
   const openGift = (gift) => {
