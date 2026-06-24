@@ -130,7 +130,96 @@ function BrandAnswerModal({ item, onClose, onNext, isLast }) {
   );
 }
 
-function BrandGame({ onBack }) {
+function AccessGate({ onUnlock }) {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const meetingCode = "fun99";
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (code.trim().toLowerCase() === meetingCode) {
+      sessionStorage.setItem("growth99-game-unlocked", "true");
+      onUnlock();
+      return;
+    }
+    setError("Nice try, detective. Wait for the meeting code 😄");
+  };
+
+  return (
+    <main className="game access-game" style={{ "--page-accent": "#ffd166" }}>
+      <div className="stars stars--one" aria-hidden="true" />
+      <div className="stars stars--two" aria-hidden="true" />
+      <section className="access-card">
+        <div className="access-card__icon" aria-hidden="true">😂</div>
+        <p className="hero__eyebrow">Caught you early</p>
+        <h1>Hello, brilliant!</h1>
+        <p>
+          Go to the meeting first.
+        </p>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="meeting-code">Meeting code</label>
+          <div>
+            <input
+              id="meeting-code"
+              value={code}
+              onChange={(event) => {
+                setCode(event.target.value);
+                setError("");
+              }}
+              placeholder="Enter code"
+              autoComplete="off"
+            />
+            <button type="submit">Unlock game</button>
+          </div>
+          <button
+            className="get-password-button"
+            onClick={() => setShowPasswordPopup(true)}
+            type="button"
+          >
+            Get password
+          </button>
+        </form>
+        {error && <p className="access-card__error">{error}</p>}
+      </section>
+
+      {showPasswordPopup && (
+        <div className="modal" role="dialog" aria-modal="true" aria-labelledby="password-popup-title">
+          <button
+            className="modal__backdrop"
+            onClick={() => setShowPasswordPopup(false)}
+            aria-label="Close password popup"
+          />
+          <div className="password-popup">
+            <button
+              className="reward__close"
+              onClick={() => setShowPasswordPopup(false)}
+              type="button"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className="password-popup__media">
+              <img
+                src="/media/password-troll.gif"
+                alt="Funny password reaction"
+                onError={(event) => {
+                  event.currentTarget.style.display = "none";
+                  event.currentTarget.nextElementSibling.hidden = false;
+                }}
+              />
+              <span hidden>Add your GIF as<br /><strong>public/media/password-troll.gif</strong></span>
+            </div>
+            <h2 id="password-popup-title">Nice try 😂</h2>
+            <p>Not going to share password, thank you</p>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+
+function BrandGame({ onStartMystery }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const item = brandQuestions[questionIndex];
@@ -152,7 +241,7 @@ function BrandGame({ onBack }) {
       <div className="stars stars--two" aria-hidden="true" />
 
       <header className="topbar">
-        <button className="brand brand--button" onClick={onBack} type="button">
+        <button className="brand brand--button" onClick={onStartMystery} type="button">
           <span className="brand__icon">🎯</span>
           <span>Growth99 Fun Friday</span>
         </button>
@@ -200,7 +289,9 @@ function BrandGame({ onBack }) {
         </button>
       </nav>
 
-      <button className="back-game-button" onClick={onBack} type="button">← Back to Mystery Boxes</button>
+      <button className="back-game-button" onClick={onStartMystery} type="button">
+        Play Mystery Box Game 🎁
+      </button>
 
       {showAnswer && (
         <BrandAnswerModal
@@ -215,14 +306,21 @@ function BrandGame({ onBack }) {
 }
 
 export default function App() {
-  const [gameMode, setGameMode] = useState("gifts");
+  const [isUnlocked, setIsUnlocked] = useState(
+    () => sessionStorage.getItem("growth99-game-unlocked") === "true",
+  );
+  const [gameMode, setGameMode] = useState("brands");
   const [pageIndex, setPageIndex] = useState(0);
   const [selectedGift, setSelectedGift] = useState(null);
   const [openedGifts, setOpenedGifts] = useState([]);
   const page = gamePages[pageIndex];
 
+  if (!isUnlocked) {
+    return <AccessGate onUnlock={() => setIsUnlocked(true)} />;
+  }
+
   if (gameMode === "brands") {
-    return <BrandGame onBack={() => setGameMode("gifts")} />;
+    return <BrandGame onStartMystery={() => setGameMode("gifts")} />;
   }
 
   const openGift = (gift) => {
@@ -248,8 +346,13 @@ export default function App() {
           <span className="brand__icon">🎁</span>
           <span>Growth99 Fun Friday</span>
         </a>
-        <div className="level-pill">
-          Level {pageIndex + 1} <span>/ {gamePages.length}</span>
+        <div className="topbar__actions">
+          <button className="topbar-link" onClick={() => setGameMode("brands")} type="button">
+            ← Guess the Brand Name
+          </button>
+          <div className="level-pill">
+            Level {pageIndex + 1} <span>/ {gamePages.length}</span>
+          </div>
         </div>
       </header>
 
@@ -276,19 +379,6 @@ export default function App() {
           />
         ))}
       </section>
-
-      {pageIndex === gamePages.length - 1 && (
-        <section className="next-game">
-          <span className="next-game__icon" aria-hidden="true">🎯</span>
-          <div>
-            <p>Ready for round two?</p>
-            <h2>Put your brand knowledge to the test.</h2>
-          </div>
-          <button onClick={() => setGameMode("brands")} type="button">
-            Guess the Brand Name →
-          </button>
-        </section>
-      )}
 
       <nav className="navigation" aria-label="Game pages">
         <button
