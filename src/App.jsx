@@ -12,16 +12,35 @@ const getSavedAttempts = () => {
   }
 };
 
-const saveWrongAttempt = (value) => {
+const getRemoteAttempts = async () => {
+  const response = await fetch("/api/attempts");
+  if (!response.ok) throw new Error("Remote attempts are unavailable.");
+  const data = await response.json();
+  return data.attempts || [];
+};
+
+const saveWrongAttempt = async (value) => {
   const trimmedValue = value.trim();
   if (!trimmedValue) return;
 
   const attempts = getSavedAttempts();
-  attempts.unshift({
+  const attempt = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
     value: trimmedValue,
     time: new Date().toLocaleString(),
-  });
+  };
+  attempts.unshift(attempt);
   localStorage.setItem(attemptStorageKey, JSON.stringify(attempts.slice(0, 50)));
+
+  try {
+    await fetch("/api/attempts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ value: trimmedValue }),
+    });
+  } catch {
+    // Local fallback is already saved above.
+  }
 };
 
 function GiftBox({ gift, accent, opened, onOpen }) {
@@ -184,7 +203,7 @@ function AccessGate({ onUnlock }) {
       return;
     }
 
-    saveWrongAttempt(code);
+    await saveWrongAttempt(code);
     setError("");
     setShowPasswordPopup(true);
   };
@@ -268,19 +287,58 @@ function AttemptBoard({ onBack }) {
   const [attempts, setAttempts] = useState(getSavedAttempts);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [attemptToDelete, setAttemptToDelete] = useState(null);
+  const [storageMessage, setStorageMessage] = useState("");
 
-  const clearAttempts = () => {
+  useEffect(() => {
+    let isMounted = true;
+
+    getRemoteAttempts()
+      .then((remoteAttempts) => {
+        if (isMounted) {
+          setAttempts(remoteAttempts);
+          setStorageMessage("");
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setStorageMessage("Showing local browser attempts. Configure Redis env vars on Vercel for global attempts.");
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const clearAttempts = async () => {
     localStorage.removeItem(attemptStorageKey);
     setAttempts([]);
     setShowClearConfirm(false);
+
+    try {
+      await fetch("/api/attempts", { method: "DELETE" });
+    } catch {
+      // Local fallback is already cleared above.
+    }
   };
 
-  const deleteSingleAttempt = () => {
+  const deleteSingleAttempt = async () => {
     if (!attemptToDelete) return;
 
     const updatedAttempts = attempts.filter((_, index) => index !== attemptToDelete.index);
     localStorage.setItem(attemptStorageKey, JSON.stringify(updatedAttempts));
     setAttempts(updatedAttempts);
+
+    if (attemptToDelete.id) {
+      try {
+        await fetch(`/api/attempts?id=${encodeURIComponent(attemptToDelete.id)}`, {
+          method: "DELETE",
+        });
+      } catch {
+        // Local fallback is already updated above.
+      }
+    }
+
     setAttemptToDelete(null);
   };
 
@@ -294,6 +352,7 @@ function AttemptBoard({ onBack }) {
         <p className="hero__eyebrow">Caught in 4K</p>
         <h1>Attempt Board</h1>
         <p>Wrong emails/passwords entered on this browser appear here.</p>
+        {storageMessage && <p className="attempt-storage-message">{storageMessage}</p>}
 
         {attempts.length === 0 ? (
           <div className="attempt-empty">No wrong attempts yet. Suspiciously innocent.</div>
