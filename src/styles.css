@@ -781,7 +781,7 @@ footer { display: flex; justify-content: space-between; width: min(1160px, 100%)
 .question-card__number { position: absolute; z-index: 1; top: 22px; left: 25px; color: rgba(255,255,255,.42); font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
 .question-card__icon { position: relative; z-index: 1; display: grid; width: 64px; height: 64px; margin-bottom: 20px; place-items: center; border-radius: 20px; background: rgba(112,225,245,.14); font-size: 30px; }
 .question-card h2 { position: relative; z-index: 1; margin: 0; font: 700 clamp(36px,6vw,62px)/1.15 "Fredoka"; }
-.question-card p { position: relative; z-index: 1; margin: 13px 0 28px; color: #70e1f5; font-size: clamp(16px,2vw,20px); font-weight: 600; }
+.question-card p { position: relative; z-index: 1; margin: 13px 0 28px; color: #70e1f5; font-size: clamp(34px,5.5vw,58px); font-family: "Fredoka", sans-serif; font-weight: 700; line-height: 1.1; }
 .reveal-button { position: relative; z-index: 1; padding: 15px 28px; background: #70e1f5; }
 .brand-navigation { width: min(720px, 100%); }
 .question-count { color: rgba(255,255,255,.5); font-size: 12px; font-weight: 700; }
