@@ -217,14 +217,14 @@ function AccessGate({ onUnlock }) {
       <div className="stars stars--one" aria-hidden="true" />
       <div className="stars stars--two" aria-hidden="true" />
       <section className="access-card">
-        <div className="access-card__icon" aria-hidden="true">😂</div>
-        <p className="hero__eyebrow">Caught you early</p>
+        <div className="access-card__icon" aria-hidden="true">🔐</div>
+        <p className="hero__eyebrow">Company Fun Activity</p>
         <h1>Hello, brilliant!</h1>
         <p>
-          Go to the meeting first.
+          Enter your company email to request access, or use the event password if you already have it.
         </p>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="meeting-code">Add your email to get the password</label>
+          <label htmlFor="meeting-code">Add your company email or password</label>
           <div>
             <input
               id="meeting-code"
@@ -244,6 +244,11 @@ function AccessGate({ onUnlock }) {
             Get password
           </button>
         </form>
+        <div className="access-card__chips" aria-label="Event highlights">
+          <span>Brand guessing</span>
+          <span>Mystery boxes</span>
+          <span>Team points</span>
+        </div>
         {error && <p className="access-card__error">{error}</p>}
       </section>
 

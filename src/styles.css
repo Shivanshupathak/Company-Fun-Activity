@@ -357,6 +357,23 @@ footer { display: flex; justify-content: space-between; width: min(1160px, 100%)
   color: #ffd6d6;
   font-size: 13px;
 }
+.access-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+.access-card__chips span {
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  color: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.055);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
 .attempt-board-link {
   margin-top: 16px;
   padding: 0;
