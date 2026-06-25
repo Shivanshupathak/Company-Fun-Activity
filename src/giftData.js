@@ -5,14 +5,14 @@
 // One row per page and one file per mystery box.
 // You can give all 24 boxes a different image or GIF.
 const mediaByPage = [
-  ["/media/g9912-1.gif", "/media/page-1-box-2.jpg", "/media/g9912-2.gif"],
-  ["/media/page-2-box-1.gif", "/media/g9912-3.gif", "/media/page-2-box-3.png"],
-  ["/media/g9912-7.gif", "/media/page-3-box-2.jpg", "/media/g9912-4.gif"],
-  ["/media/g9912-6.gif", "/media/g9912-5.gif", "/media/page-4-box-3.png"],
-  ["/media/page-5-box-1.gif", "/media/page-5-box-2.jpg", "/media/page-5-box-3.png"],
-  ["/media/page-6-box-1.gif", "/media/page-6-box-2.jpg", "/media/page-6-box-3.png"],
-  ["/media/page-7-box-1.gif", "/media/page-7-box-2.jpg", "/media/page-7-box-3.png"],
-  ["/media/page-8-box-1.gif", "/media/page-8-box-2.jpg", "/media/page-8-box-3.png"],
+  ["/media/g9912-1.gif", "/media/ye.gif", "/media/g9912-2.gif"],
+  ["/media/g9912-6.gif", "/media/g9912-3.gif", "/media/1000049804.gif"],
+  ["/media/g9912-7.gif", "/media/garam-mas.gif", "/media/g9912-5.gif"],
+  ["/media/kgf-chapter2.gif", "/media/mouli-middle-class-biopic.gif", "/media/rey-evarra-meerantha.gif"],
+  ["/media/balayy.gif", "/media/balayy.gif", "/media/balayy.gif"],
+  ["/media/moham.gif", "/media/mohammad.gif", "/media/tumhe-.gif"],
+  ["/media/cid-pizza-bhya.gif", "/media/cid-pizza-bhya.gif", "/media/cid-pizza-bhya.gif"],
+  ["/media/r2h-oh-re-maiya.gif", "/media/memes-maaro.gif", "/media/bhagwan-ka.gif"],
 ];
 
 const pageThemes = [
