@@ -209,6 +209,17 @@ button:focus-visible, a:focus-visible { outline: 3px solid #fff; outline-offset:
 .dot { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; background: rgba(255,255,255,.24); transition: .25s ease; }
 .dot--active { width: 24px; border-radius: 10px; background: var(--page-accent); }
 footer { display: flex; justify-content: space-between; width: min(1160px, 100%); margin: 48px auto 0; padding: 25px 0 30px; border-top: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.35); font-size: 11px; }
+.footer-link-button {
+  padding: 0;
+  border: 0;
+  color: rgba(255,255,255,.46);
+  cursor: pointer;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.footer-link-button:hover { color: #fff; }
 
 .access-game {
   display: grid;
@@ -278,7 +289,7 @@ footer { display: flex; justify-content: space-between; width: min(1160px, 100%)
 }
 .access-card form div {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 .access-card input {
@@ -306,21 +317,20 @@ footer { display: flex; justify-content: space-between; width: min(1160px, 100%)
 }
 .get-password-button {
   width: fit-content;
-  margin: 4px auto 0;
-  padding: 0;
+  margin: 6px auto 0;
+  padding: 15px 24px;
   border: 0;
-  border-bottom: 2px dashed var(--page-accent);
-  border-radius: 0;
-  color: var(--page-accent);
+  border-radius: 16px;
+  color: #251647;
   cursor: pointer;
-  background: transparent;
-  box-shadow: none;
-  font-size: 14px;
+  background: var(--page-accent);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--page-accent) 22%, transparent);
+  font-size: 15px;
   font-weight: 900;
 }
 .get-password-button:hover {
-  color: #fff;
-  transform: rotate(-1deg) scale(1.04);
+  color: #251647;
+  transform: translateY(-2px) rotate(-1deg);
 }
 .access-card__secret {
   width: fit-content;
@@ -346,6 +356,144 @@ footer { display: flex; justify-content: space-between; width: min(1160px, 100%)
   margin: 14px 0 0;
   color: #ffd6d6;
   font-size: 13px;
+}
+.attempt-board-link {
+  margin-top: 16px;
+  padding: 0;
+  border: 0;
+  color: rgba(255,255,255,.42);
+  cursor: pointer;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 800;
+}
+.attempt-board-link:hover { color: #fff; }
+.attempt-game {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+}
+.attempt-board {
+  width: min(720px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  padding: clamp(28px, 5vw, 44px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 34px;
+  text-align: center;
+  background: linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.035));
+  box-shadow: 0 35px 90px rgba(0,0,0,.35);
+}
+.attempt-board h1 {
+  margin: 0;
+  font: 700 clamp(40px, 7vw, 64px)/1 "Fredoka";
+  letter-spacing: -.04em;
+}
+.attempt-board > p:not(.hero__eyebrow) {
+  margin: 14px auto 24px;
+  color: rgba(255,255,255,.62);
+}
+.attempt-empty {
+  padding: 24px;
+  border: 1px dashed rgba(255,255,255,.16);
+  border-radius: 20px;
+  color: rgba(255,255,255,.55);
+  background: rgba(0,0,0,.12);
+}
+.attempt-list {
+  display: grid;
+  gap: 10px;
+  max-height: 340px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+.attempt-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 15px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px;
+  background: rgba(0,0,0,.16);
+}
+.attempt-list li div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.attempt-list span {
+  overflow-wrap: anywhere;
+  color: #fff;
+  font-weight: 800;
+}
+.attempt-list small {
+  flex: 0 0 auto;
+  color: rgba(255,255,255,.45);
+  font-size: 11px;
+}
+.attempt-delete-button {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  color: rgba(255,255,255,.72);
+  cursor: pointer;
+  background: rgba(255,255,255,.07);
+  font-size: 11px;
+  font-weight: 900;
+  transition: .2s ease;
+}
+.attempt-delete-button:hover {
+  color: #fff;
+  border-color: rgba(255,143,189,.55);
+  background: rgba(255,143,189,.16);
+  transform: translateY(-1px);
+}
+.attempt-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+.confirm-popup {
+  position: relative;
+  width: min(430px, 100%);
+  padding: 34px 28px 28px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 28px;
+  text-align: center;
+  background: linear-gradient(155deg, #321858, #140a30 76%);
+  box-shadow: 0 40px 100px rgba(0,0,0,.55);
+  animation: modal-pop .45s cubic-bezier(.16,1,.3,1) both;
+}
+.confirm-popup__icon {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 17px;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 22px;
+  background: rgba(255,255,255,.09);
+  font-size: 34px;
+}
+.confirm-popup h2 {
+  margin: 0 0 10px;
+  font: 700 clamp(30px, 6vw, 42px)/1 "Fredoka";
+}
+.confirm-popup p {
+  margin: 0 auto 22px;
+  color: rgba(255,255,255,.62);
+  line-height: 1.55;
+}
+.confirm-popup__actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 .password-popup {
   position: relative;

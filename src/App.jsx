@@ -2,6 +2,28 @@ import React, { useEffect, useState } from "react";
 import { gamePages } from "./giftData";
 import { brandQuestions } from "./brandData";
 
+const attemptStorageKey = "growth99-wrong-attempts";
+
+const getSavedAttempts = () => {
+  try {
+    return JSON.parse(localStorage.getItem(attemptStorageKey)) || [];
+  } catch {
+    return [];
+  }
+};
+
+const saveWrongAttempt = (value) => {
+  const trimmedValue = value.trim();
+  if (!trimmedValue) return;
+
+  const attempts = getSavedAttempts();
+  attempts.unshift({
+    value: trimmedValue,
+    time: new Date().toLocaleString(),
+  });
+  localStorage.setItem(attemptStorageKey, JSON.stringify(attempts.slice(0, 50)));
+};
+
 function GiftBox({ gift, accent, opened, onOpen }) {
   return (
     <button
@@ -134,17 +156,42 @@ function AccessGate({ onUnlock }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
-  const meetingCode = "maihudon";
+  const [showAttempts, setShowAttempts] = useState(false);
+  const meetingCodeHash = "f09401e0c575e96920b61d4eac24c9bd489a2ef6a83b0f8e8d54c0b89c39c7b3";
 
-  const handleSubmit = (event) => {
+  const hashText = async (text) => {
+    const encodedText = new TextEncoder().encode(text);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", encodedText);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+  };
+
+  const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (code.trim().toLowerCase() === meetingCode) {
+    const enteredValue = code.trim();
+    const enteredCodeHash = await hashText(enteredValue.toLowerCase());
+    if (enteredCodeHash === meetingCodeHash) {
       sessionStorage.setItem("growth99-game-unlocked", "true");
       onUnlock();
       return;
     }
-    setError("Nice try, detective. Wait for the meeting code 😄");
+
+    if (enteredValue.includes("@") && !isValidEmail(enteredValue)) {
+      setError("Email thoda suspicious lag raha hai. Please enter a valid email 😄");
+      return;
+    }
+
+    saveWrongAttempt(code);
+    setError("");
+    setShowPasswordPopup(true);
   };
+
+  if (showAttempts) {
+    return <AttemptBoard onBack={() => setShowAttempts(false)} />;
+  }
 
   return (
     <main className="game access-game" style={{ "--page-accent": "#ffd166" }}>
@@ -158,7 +205,7 @@ function AccessGate({ onUnlock }) {
           Go to the meeting first.
         </p>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="meeting-code">Meeting code</label>
+          <label htmlFor="meeting-code">Add your email to get the password</label>
           <div>
             <input
               id="meeting-code"
@@ -167,15 +214,13 @@ function AccessGate({ onUnlock }) {
                 setCode(event.target.value);
                 setError("");
               }}
-              placeholder="Enter code"
+              placeholder="Enter email or password"
               autoComplete="off"
             />
-            <button type="submit">Unlock game</button>
           </div>
           <button
             className="get-password-button"
-            onClick={() => setShowPasswordPopup(true)}
-            type="button"
+            type="submit"
           >
             Get password
           </button>
@@ -212,6 +257,121 @@ function AccessGate({ onUnlock }) {
             </div>
             <h2 id="password-popup-title">Nice try 😂</h2>
             <p>Not going to share password, thank you</p>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+
+function AttemptBoard({ onBack }) {
+  const [attempts, setAttempts] = useState(getSavedAttempts);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [attemptToDelete, setAttemptToDelete] = useState(null);
+
+  const clearAttempts = () => {
+    localStorage.removeItem(attemptStorageKey);
+    setAttempts([]);
+    setShowClearConfirm(false);
+  };
+
+  const deleteSingleAttempt = () => {
+    if (!attemptToDelete) return;
+
+    const updatedAttempts = attempts.filter((_, index) => index !== attemptToDelete.index);
+    localStorage.setItem(attemptStorageKey, JSON.stringify(updatedAttempts));
+    setAttempts(updatedAttempts);
+    setAttemptToDelete(null);
+  };
+
+  return (
+    <main className="game attempt-game" style={{ "--page-accent": "#ff8fbd" }}>
+      <div className="stars stars--one" aria-hidden="true" />
+      <div className="stars stars--two" aria-hidden="true" />
+
+      <section className="attempt-board">
+        <div className="access-card__icon" aria-hidden="true">🕵️</div>
+        <p className="hero__eyebrow">Caught in 4K</p>
+        <h1>Attempt Board</h1>
+        <p>Wrong emails/passwords entered on this browser appear here.</p>
+
+        {attempts.length === 0 ? (
+          <div className="attempt-empty">No wrong attempts yet. Suspiciously innocent.</div>
+        ) : (
+          <ul className="attempt-list">
+            {attempts.map((attempt, index) => (
+              <li key={`${attempt.value}-${attempt.time}-${index}`}>
+                <div>
+                  <span>{attempt.value}</span>
+                  <small>{attempt.time}</small>
+                </div>
+                <button
+                  className="attempt-delete-button"
+                  onClick={() => setAttemptToDelete({ ...attempt, index })}
+                  type="button"
+                  aria-label={`Delete attempt ${attempt.value}`}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="attempt-actions">
+          <button className="nav-button nav-button--secondary" onClick={onBack} type="button">
+            ← Back
+          </button>
+          <button className="nav-button" onClick={() => setShowClearConfirm(true)} type="button">
+            Clear board
+          </button>
+        </div>
+      </section>
+
+      {showClearConfirm && (
+        <div className="modal" role="dialog" aria-modal="true" aria-labelledby="clear-board-title">
+          <button
+            className="modal__backdrop"
+            onClick={() => setShowClearConfirm(false)}
+            aria-label="Cancel clear board"
+          />
+          <div className="confirm-popup">
+            <div className="confirm-popup__icon" aria-hidden="true">🧹</div>
+            <h2 id="clear-board-title">Clear the evidence?</h2>
+            <p>This will remove all saved wrong attempts from this browser.</p>
+            <div className="confirm-popup__actions">
+              <button className="nav-button nav-button--secondary" onClick={() => setShowClearConfirm(false)} type="button">
+                Cancel
+              </button>
+              <button className="nav-button" onClick={clearAttempts} type="button">
+                Yes, clear it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {attemptToDelete && (
+        <div className="modal" role="dialog" aria-modal="true" aria-labelledby="delete-attempt-title">
+          <button
+            className="modal__backdrop"
+            onClick={() => setAttemptToDelete(null)}
+            aria-label="Cancel delete attempt"
+          />
+          <div className="confirm-popup">
+            <div className="confirm-popup__icon" aria-hidden="true">🗑️</div>
+            <h2 id="delete-attempt-title">Remove this attempt?</h2>
+            <p>
+              This will delete <strong>{attemptToDelete.value}</strong> from the board.
+            </p>
+            <div className="confirm-popup__actions">
+              <button className="nav-button nav-button--secondary" onClick={() => setAttemptToDelete(null)} type="button">
+                Cancel
+              </button>
+              <button className="nav-button" onClick={deleteSingleAttempt} type="button">
+                Yes, delete it
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -322,7 +482,7 @@ function MysteryRules({ onStart, onBack }) {
   );
 }
 
-function BrandGame({ onStartMystery }) {
+function BrandGame({ onStartMystery, onViewAttempts }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const item = brandQuestions[questionIndex];
@@ -396,6 +556,13 @@ function BrandGame({ onStartMystery }) {
         Play Mystery Box Game 🎁
       </button>
 
+      <footer>
+        <span>{brandQuestions.length} brand clues loaded</span>
+        <button className="footer-link-button" onClick={onViewAttempts} type="button">
+          View attempt board
+        </button>
+      </footer>
+
       {showAnswer && (
         <BrandAnswerModal
           item={item}
@@ -427,7 +594,16 @@ export default function App() {
   }
 
   if (gameMode === "brands") {
-    return <BrandGame onStartMystery={() => setGameMode("mysteryRules")} />;
+    return (
+      <BrandGame
+        onStartMystery={() => setGameMode("mysteryRules")}
+        onViewAttempts={() => setGameMode("attempts")}
+      />
+    );
+  }
+
+  if (gameMode === "attempts") {
+    return <AttemptBoard onBack={() => setGameMode("brands")} />;
   }
 
   if (gameMode === "mysteryRules") {
@@ -531,7 +707,9 @@ export default function App() {
 
       <footer>
         <span>{openedGifts.length} / 24 gifts discovered</span>
-        <span>Made for happy clicks ✦</span>
+        <button className="footer-link-button" onClick={() => setGameMode("attempts")} type="button">
+          View attempt board
+        </button>
       </footer>
 
       {selectedGift && (
